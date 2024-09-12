@@ -5,6 +5,7 @@ class Store {
   constructor(initState = {}) {
     this.state = initState;
     this.listeners = []; // Слушатели изменений состояния
+    this.listLength = initState.list.length;
   }
 
   /**
@@ -44,7 +45,7 @@ class Store {
   addItem() {
     this.setState({
       ...this.state,
-      list: [...this.state.list, { code: this.state.list.length + 1, title: 'Новая запись' }],
+      list: [...this.state.list, { code: ++(this.listLength), title: 'Новая запись', selectTitle: 'Было выделено', selectCount: 0 }],
     });
   }
 
@@ -71,7 +72,7 @@ class Store {
           item.selected = !item.selected;
           if(item.selected) ++item.selectCount;
         } else {
-          item.selected = true;
+          item.selected = false;
         }
         return item;
       }),
@@ -80,5 +81,3 @@ class Store {
 }
 
 export default Store;
-
-// test

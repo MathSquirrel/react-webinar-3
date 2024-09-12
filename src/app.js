@@ -27,7 +27,13 @@ function App({ store }) {
                 onClick={() => store.selectItem(item.code)}
               >
                 <div className="Item-code">{item.code}</div>
-                <div className="Item-title">{item.title}</div>
+                <div className="Item-title">{
+                  item.title + 
+                  (item.selectCount != 0 ? ' | ' + item.selectTitle + ' ' + 
+                  item.selectCount + ' ' + 
+                  ([2,3,4].includes(item.selectCount % 10) && ![12,13,14].includes(item.selectCount % 100) ? 'раза' : 'раз')
+                  : '')
+                }</div>
                 <div className="Item-actions">
                   <button onClick={() => store.deleteItem(item.code)}>Удалить</button>
                 </div>
