@@ -80,3 +80,5 @@ class Store {
 }
 
 export default Store;
+
+// test
