@@ -71,7 +71,7 @@ class Store {
           item.selected = !item.selected;
           if(item.selected) ++item.selectCount;
         } else {
-          item.selected = false;
+          item.selected = true;
         }
         return item;
       }),
