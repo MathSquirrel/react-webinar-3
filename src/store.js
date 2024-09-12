@@ -45,7 +45,7 @@ class Store {
   addItem() {
     this.setState({
       ...this.state,
-      list: [...this.state.list, { code: ++(this.listLength), title: 'Новая запись', selectTitle: 'Было выделено', selectCount: 0 }],
+      list: [...this.state.list, { code: ++(this.listLength), title: 'Новая запись', selectTitle: 'Выделяли', selectCount: 0 }],
     });
   }
 
