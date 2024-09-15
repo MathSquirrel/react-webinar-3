@@ -26,3 +26,17 @@ export function createElement(name, props = {}, ...children) {
 
   return element;
 }
+
+
+/**
+ * Создание и возврат сообщения о количестве кликов
+ * @param msg {String} Текст
+ * @param cnt {Int} Число кликов
+ * @returns {String}
+ */
+export function countMessage(msg, cnt) {
+
+  let pluralizeCount = () => [2,3,4].includes(cnt % 10) && ! [12,13,14].includes(cnt % 100) ? 'раза' : 'раз';
+
+  return ' | ' + msg + ' ' + cnt + ' ' + pluralizeCount();
+}
