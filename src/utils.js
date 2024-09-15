@@ -31,12 +31,28 @@ export function createElement(name, props = {}, ...children) {
 /**
  * Создание и возврат сообщения о количестве кликов
  * @param msg {String} Текст
- * @param cnt {Int} Число кликов
+ * @param cnt {Integer} Число кликов
+ * @param wrd {String} Слово для склонения
+ * @param ends {Array} Массив с окончаниями для соответствующих цифр ['1', '2-4', 'etc']
  * @returns {String}
  */
-export function countMessage(msg, cnt) {
+export function countMessage(msg, cnt, wrd, ...ends) {
 
-  let pluralizeCount = () => [2,3,4].includes(cnt % 10) && ! [12,13,14].includes(cnt % 100) ? 'раза' : 'раз';
+  let pluralize = determineLanguage();
+  function determineLanguage() {
+    if (/[а-я]/.test(wrd)) return russianPlural;
+    else return englishPlural;
+  }
+  function englishPlural() {
+    if (cnt != 1) return 's';
+    return '';
+  }
+  function russianPlural() {
+    if (cnt % 10 == 1) return ends[0];
+      else if ([2,3,4].includes(cnt % 10) && ![12,13,14].includes(cnt % 100)) return ends[1]; 
+      return ends[2];
+  }
 
-  return ' | ' + msg + ' ' + cnt + ' ' + pluralizeCount();
+  let finalWord = wrd + pluralize();
+  return ' | ' + msg + ' ' + cnt + ' ' + finalWord;
 }
