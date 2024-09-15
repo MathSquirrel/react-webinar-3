@@ -32,8 +32,8 @@ export function createElement(name, props = {}, ...children) {
  * Создание и возврат сообщения о количестве кликов
  * @param msg {String} Текст
  * @param cnt {Integer} Число кликов
- * @param wrd {String} Слово для склонения
- * @param ends {Array} Массив с окончаниями для соответствующих цифр ['1', '2-4', 'etc']
+ * @param wrd {String} Словоформа для склонения без окончания или мягкого знака
+ * @param ends {Array} Массив с окончаниями для соответствующих цифр ['1', '2-4', 'все остальные']
  * @returns {String}
  */
 export function countMessage(msg, cnt, wrd, ...ends) {
