@@ -28,16 +28,20 @@ function Item(props) {
       <div className="Item-code">{props.item.code}</div>
       <div className="Item-title">
         {props.item.title}{' '}
-        {count
+        {/* {count
           ? ` | Выделяли ${count} ${plural(count, {
               one: 'раз',
               few: 'раза',
               many: 'раз',
             })}`
-          : ''}
+          : ''} */}
       </div>
+      <div className="Item-price">
+
+      </div>
+      
       <div className="Item-actions">
-        <button onClick={callbacks.onDelete}>Удалить</button>
+        <button onClick={callbacks.onEdit}>не вдупляю</button>
       </div>
     </div>
   );

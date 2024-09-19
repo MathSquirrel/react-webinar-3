@@ -3,6 +3,8 @@ import List from './components/list';
 import Controls from './components/controls';
 import Head from './components/head';
 import PageLayout from './components/page-layout';
+import BasketModal from './components/basket-modal';
+import BasketList from './components/basket-list';
 
 /**
  * Приложение
@@ -11,7 +13,10 @@ import PageLayout from './components/page-layout';
  */
 function App({ store }) {
   const list = store.getState().list;
+  const basket = store.getState().list;
+  // добавить данные для корзины
 
+  // добавить новые колбэки, но сначала изменить store
   const callbacks = {
     onDeleteItem: useCallback(
       code => {
@@ -19,29 +24,34 @@ function App({ store }) {
       },
       [store],
     ),
-
-    onSelectItem: useCallback(
-      code => {
-        store.selectItem(code);
-      },
-      [store],
-    ),
-
     onAddItem: useCallback(() => {
-      store.addItem();
+      store.addItem(); 
+      // все должно добавляться в корзину, а не list
     }, [store]),
+    goBasket: useCallback(() => {
+      // открыть модалку
+    }),
   };
+  
+  // многие вещи переименовал! не забудь
 
   return (
     <PageLayout>
-      <Head title="Приложение на чистом JS" />
-      <Controls onAdd={callbacks.onAddItem} />
+      <Head title="Магазин"/>
+      {/* не знаю, как сделать */}
+      <Controls onBasket={callbacks.goBasket} />
       <List
         list={list}
-        onDeleteItem={callbacks.onDeleteItem}
-        onSelectItem={callbacks.onSelectItem}
+        onAddItem={callbacks.onAddItem}
       />
-    </PageLayout>
+      <BasketModal onClose={callbacks.onCloseBasket}>
+        <Head title="Корзина"/>
+        <BasketList 
+          list={basket}
+          onDeleteItem={callbacks.onDeleteItem}
+        />
+      </BasketModal>
+    </PageLayout> 
   );
 }
 
