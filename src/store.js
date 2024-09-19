@@ -1,3 +1,5 @@
+import { generateCode } from './utils';
+
 /**
  * Хранилище состояния приложения
  */
@@ -5,7 +7,6 @@ class Store {
   constructor(initState = {}) {
     this.state = initState;
     this.listeners = []; // Слушатели изменений состояния
-    this.maxCode = initState.list.reduce((prev, curr) => prev.code > curr.code ? prev : curr).code; // Максимальный code элементов
   }
 
   /**
@@ -36,10 +37,7 @@ class Store {
   setState(newState) {
     this.state = newState;
     // Вызываем всех слушателей
-    for (const listener of this.listeners) {
-      listener();
-      console.log(listener);  // me
-    }
+    for (const listener of this.listeners) listener();
   }
 
   /**
@@ -48,7 +46,7 @@ class Store {
   addItem() {
     this.setState({
       ...this.state,
-      list: [...this.state.list, { code: ++(this.maxCode), title: 'Новая запись', selectCount: 0 }],
+      list: [...this.state.list, { code: generateCode(), title: 'Новая запись' }],
     });
   }
 
@@ -59,6 +57,7 @@ class Store {
   deleteItem(code) {
     this.setState({
       ...this.state,
+      // Новый список, в котором не будет удаляемой записи
       list: this.state.list.filter(item => item.code !== code),
     });
   }
@@ -71,20 +70,16 @@ class Store {
     this.setState({
       ...this.state,
       list: this.state.list.map(item => {
-        if(item.code === code) {
-          /* return {
+        if (item.code === code) {
+          // Смена выделения и подсчёт
+          return {
             ...item,
-            selected: !item.selected. // -- возвращаем новый объект. Теперь иммутабельно
-            count: item.selected ? item.count : item.count + 1 || 1,  // если свойства нет, приравниваем 1. Если не был выделен до этого момента, то добавляем счетчик
+            selected: !item.selected,
+            count: item.selected ? item.count : item.count + 1 || 1,
+          };
         }
-          */
-          item.selected = !item.selected;
-          if(item.selected) ++item.selectCount;
-        } else {
-          item.selected = false;
-        }
-        // return item.selected ? {...item, selected: false} : item;
-        return item;
+        // Сброс выделения если выделена
+        return item.selected ? { ...item, selected: false } : item;
       }),
     });
   }

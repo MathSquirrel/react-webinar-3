@@ -1,77 +1,37 @@
-const propNames = new Set(['id', 'className', 'textContent', 'onclick']);
-
 /**
- * Создание элемента со свойствами и вложенными элементами
- * @param name {String} Название HTML тега
- * @param props {Object} Свойства и атрибуты элемента
- * @param children {...Node} Вложенные элементы
- * @returns {HTMLElement}
+ * Плюрализация
+ * Возвращает вариант с учётом правил множественного числа под указанную локаль
+ * @param value {Number} Число, под которое выбирается вариант формы.
+ * @param variants {Object<String>} Варианты форм множественного числа.
+ * @example plural(5, {one: 'товар', few: 'товара', many: 'товаров'})
+ * @param [locale] {String} Локаль (код языка)
+ * @returns {*|string}
  */
-export function createElement(name, props = {}, ...children) {
-  const element = document.createElement(name);
-
-  // Назначение свойств и атрибутов
-  for (const name of Object.keys(props)) {
-    if (propNames.has(name)) {
-      element[name] = props[name];
-    } else {
-      element.setAttribute(name, props[name]);
-    }
-  }
-
-  // Вставка вложенных элементов
-  for (const child of children) {
-    element.append(child);
-  }
-
-  return element;
-}
-
-
-/**
- * Создание и возврат сообщения о количестве кликов
- * @param msg {String} Текст
- * @param cnt {Integer} Число кликов
- * @param wrd {String} Словоформа для склонения без окончания или мягкого знака
- * @param ends {Array} Массив с окончаниями для соответствующих цифр ['1', '2-4', 'все остальные']
- * @returns {String}
- */
-export function countMessage(msg, cnt, wrd, ...ends) {
-
-  let pluralize = determineLanguage();
-  function determineLanguage() {
-    if (/[а-я]/.test(wrd)) return russianPlural;
-    else return englishPlural;
-  }
-  function englishPlural() {
-    if (cnt != 1) return 's';
-    return '';
-  }
-  function russianPlural() {
-    if (cnt % 10 == 1) return ends[0];
-      else if ([2,3,4].includes(cnt % 10) && ![12,13,14].includes(cnt % 100)) return ends[1]; 
-      return ends[2];
-  }
-
-  let finalWord = wrd + pluralize();
-  return ' | ' + msg + ' ' + cnt + ' ' + finalWord;
-}
-
-export function plural(value, variants = {}, locale = "ru-RU") {
-  // 3 формы в русском языке на целые числа
+export function plural(value, variants = {}, locale = 'ru-RU') {
+  // Получаем фурму кодовой строкой: 'zero', 'one', 'two', 'few', 'many', 'other'
+  // В русском языке 3 формы: 'one', 'few', 'many', и 'other' для дробных
+  // В английском 2 формы: 'one', 'other'
   const key = new Intl.PluralRules(locale).select(value);
-  // это api браузера
-  // в нем кодовые строки для каждого числа
-
+  // Возвращаем вариант по ключу, если он есть
   return variants[key] || '';
 }
 
+/**
+ * Генератор чисел с шагом 1
+ * Вариант с замыканием на начальное значение в самовызываемой функции.
+ * @returns {Number}
+ */
+export const generateCode = (function (start = 0) {
+  return () => ++start;
+})();
 
-
-
-// вариант с настоящим генератором
-export const generateCode = (function(start = 0) {
-  // ФУНКЦИЯ не является ЧИСТОЙ, у нее будет состояние
+/**
+ * Генератор чисел с шагом 1
+ * Вариант с генератором.
+ * Сразу создаётся генератор и возвращается функция для получения следующего значения генератора
+ * @returns {Number}
+ */
+export const generateCode1 = (function (start = 0) {
   function* realGenerator(start) {
     while (true) {
       yield ++start;
@@ -80,21 +40,13 @@ export const generateCode = (function(start = 0) {
 
   const gen = realGenerator(start);
   return () => gen.next().value;
-}());
+})();
 
+/**
+ * Генератор чисел с шагом 1
+ * Вариант с использованием функции как объекта для хранения значения value
+ * @returns {Number}
+ */
 export function generateCode2() {
-  return generateCode2.value ? ++generateCode2.value : generateCode2.value = 1;
+  return generateCode2.value ? ++generateCode2.value : (generateCode2.value = 1);
 }
-
-// не забыть применить их в начальном списке и методе создания записи
-
-/* ------------------------------- */
-
-function makeGenerateCode(start = 0) {
-  return () => {
-    return ++start;  // замыкание
-  }
-}
-
-export const generateCode3 = makeGenerateCode(); // а можно ли вернуть просто тело функции и без =>?
-
