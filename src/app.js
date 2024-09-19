@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { createElement, countMessage } from './utils.js';
-import './styles.css';
+import List from './components/list/index.js';
+import Controls from './components/controls/index.js';
+import Head from './components/head/index.js';
+import PageLayout from './components/page-layout/index.js';
 
 /**
  * Приложение
@@ -8,38 +11,33 @@ import './styles.css';
  * @returns {React.ReactElement}
  */
 function App({ store }) {
+
+
   const list = store.getState().list;
 
+  const callbacks = {
+    onDeleteItem: useCallback((code) => {
+      store.deleteItem(code);
+    }, [store]),
+  
+    onSelectItem: useCallback((code) => {
+      store.selectItem(code);
+    }, [store]),
+  
+    onAddItem: useCallback(() => {
+      store.addItem();
+    }, [store])
+  
+  }
+
+  
   return (
-    <div className="App">
-      <div className="App-head">
-        <h1>Приложение на чистом JS</h1>
-      </div>
-      <div className="App-controls">
-        <button onClick={() => store.addItem()}>Добавить</button>
-      </div>
-      <div className="App-center">
-        <div className="List">
-          {list.map(item => (
-            <div key={item.code} className="List-item">
-              <div
-                className={'Item' + (item.selected ? ' Item_selected' : '')}
-                onClick={() => store.selectItem(item.code)}
-              >
-                <div className="Item-code">{item.code}</div>
-                <div className="Item-title">{
-                  item.title + 
-                  (item.selectCount > 0 ?countMessage('Выделяли', item.selectCount, 'раз', '', 'а', '') : '')
-                }</div>
-                <div className="Item-actions">
-                  <button onClick={() => store.deleteItem(item.code)}>Удалить</button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    <PageLayout>
+      <Head title="Приложение на чистом JS"/>
+      <Controls onAdd={callbacks.onAddItem}/>
+      <List list={list} onDeleteItem={callbacks.onDeleteItem} onSelectItem={callbacks.onSelectItem}/>
+    </PageLayout>
+
   );
 }
 

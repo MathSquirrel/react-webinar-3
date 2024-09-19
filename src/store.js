@@ -36,7 +36,10 @@ class Store {
   setState(newState) {
     this.state = newState;
     // Вызываем всех слушателей
-    for (const listener of this.listeners) listener();
+    for (const listener of this.listeners) {
+      listener();
+      console.log(listener);  // me
+    }
   }
 
   /**
@@ -69,11 +72,18 @@ class Store {
       ...this.state,
       list: this.state.list.map(item => {
         if(item.code === code) {
+          /* return {
+            ...item,
+            selected: !item.selected. // -- возвращаем новый объект. Теперь иммутабельно
+            count: item.selected ? item.count : item.count + 1 || 1,  // если свойства нет, приравниваем 1. Если не был выделен до этого момента, то добавляем счетчик
+        }
+          */
           item.selected = !item.selected;
           if(item.selected) ++item.selectCount;
         } else {
           item.selected = false;
         }
+        // return item.selected ? {...item, selected: false} : item;
         return item;
       }),
     });

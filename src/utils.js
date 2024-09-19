@@ -56,3 +56,45 @@ export function countMessage(msg, cnt, wrd, ...ends) {
   let finalWord = wrd + pluralize();
   return ' | ' + msg + ' ' + cnt + ' ' + finalWord;
 }
+
+export function plural(value, variants = {}, locale = "ru-RU") {
+  // 3 формы в русском языке на целые числа
+  const key = new Intl.PluralRules(locale).select(value);
+  // это api браузера
+  // в нем кодовые строки для каждого числа
+
+  return variants[key] || '';
+}
+
+
+
+
+// вариант с настоящим генератором
+export const generateCode = (function(start = 0) {
+  // ФУНКЦИЯ не является ЧИСТОЙ, у нее будет состояние
+  function* realGenerator(start) {
+    while (true) {
+      yield ++start;
+    }
+  }
+
+  const gen = realGenerator(start);
+  return () => gen.next().value;
+}());
+
+export function generateCode2() {
+  return generateCode2.value ? ++generateCode2.value : generateCode2.value = 1;
+}
+
+// не забыть применить их в начальном списке и методе создания записи
+
+/* ------------------------------- */
+
+function makeGenerateCode(start = 0) {
+  return () => {
+    return ++start;  // замыкание
+  }
+}
+
+export const generateCode3 = makeGenerateCode(); // а можно ли вернуть просто тело функции и без =>?
+
